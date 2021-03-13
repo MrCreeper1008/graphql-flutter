@@ -57,10 +57,13 @@ Map<String, dynamic> deeplyMergeLeft(
 /// If you want to provide your own document parser or builder,
 /// keep in mind that default cache normalization depends heavily on `__typename`s,
 /// So you should probably include an [AddTypenameVistor] [transform]
-DocumentNode gql(String document) => transform(
+DocumentNode gql(String document, {List<DocumentNode> fragments = const []}) =>
+    transform(
       parseString(document),
       [AddTypenameVisitor()],
-    );
+    )..definitions.addAll(
+        fragments.expand((fragment) => fragment.definitions),
+      );
 
 /// Converts [MultipartFile]s to a string representation containing hashCode. Default argument to [variableSanitizer]
 Object sanitizeFilesForCache(dynamic object) {
